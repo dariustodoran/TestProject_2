@@ -1,0 +1,274 @@
+W1 - Recapitulare - Todoran Darius - grupa 2
+
+#include <iostream>
+using namespace std;
+
+// ex A
+/*struct node
+{
+	int info;
+	node* succ;
+};
+
+const int MAX = 100;
+int stiva[MAX];
+int top = -1;
+
+int stiva_goala_static(int top)
+{
+	return top ==-1;
+}
+
+int stiva_plina_static(int top, int MAX)
+{
+	return top == MAX-1;
+}
+
+void push(int stiva[], int& top, int MAX, int info_nou)
+{
+	if (!stiva_plina_static(top, MAX))
+	{
+		stiva[top] = info_nou;
+		top++;
+	}
+	else
+	{
+		cout << "STACK OVERFLOW\n";
+	}
+}
+
+int pop(int stiva[], int& top)
+{
+	if (!stiva_goala_static(top))
+	{
+		top--;
+		return stiva[top];
+	}
+	else
+	{
+		cout << "STACK UNDERFLOW\n";
+		return -1;
+	}
+}
+
+int peek() {
+	if (stiva_goala_static(top)) 
+	{
+		cout << "Stiva este goala!\n";
+		return -1;
+	}
+	return stiva[top];
+}
+
+struct coadaNod
+{
+	int valoare;
+	coadaNod* next;
+};
+
+coadaNod* FRONT_d = NULL;
+coadaNod* END_d = NULL;
+
+bool empty_queueDin(coadaNod* FRONT) {
+	return FRONT == NULL;
+}
+
+void enqueueDIN(coadaNod*& FRONT, coadaNod*& END, int val_nou)
+{
+	coadaNod* nou = new coadaNod{ val_nou,NULL };
+	if (END == NULL)
+	{
+		FRONT = END = nou;
+	}
+	else
+	{
+		END->next = nou;
+		END = nou;
+	}
+}
+
+int dequeueDin(coadaNod*& FRONT, coadaNod*& END) {
+	if (!empty_queueDin(FRONT)) 
+	{
+		int val_sters = FRONT->valoare;
+		coadaNod* temp = FRONT;
+		FRONT = FRONT->next;
+		delete temp;
+		if (FRONT == NULL)
+			END = NULL;
+		return val_sters;
+	}
+	else 
+	{
+		cout << "Queue underflow\n";
+		return -1;
+	}
+}
+
+int main()
+{
+	char cuvant[100];
+	cout << "Introduceti cuv: ";
+	cin >> cuvant;
+
+	for (int i = 0; cuvant[i] != '\0'; i++) 
+	{
+		push(stiva, top, MAX, cuvant[i]);
+		enqueueDIN(FRONT_d, END_d, cuvant[i]);
+	}
+
+bool palindrom = true;
+for (int i = 0; cuvant[i] != '\0'; i++) 
+{
+	int c1 = pop(stiva, top);                      // din stiva
+	int c2 = dequeueDin(FRONT_d, END_d);           // din coada
+	if (c1 != c2) 
+	{
+		palindrom = false;
+		break;
+	}
+}
+
+if (palindrom) cout << "Cuvantul este palindrom.\n";
+else cout << "Cuvantul NU este palindrom.\n";
+
+return 0;
+}*/
+
+
+
+//ex B
+
+struct node
+{
+	int info;
+	node* succ;
+};
+
+const int MAX = 100;
+int stiva[MAX], info_nou;
+
+int stiva_goala_dinamic(node*& top)
+{
+	return top == NULL;
+}
+
+int inserare_sfarsit_LSI(node*& LIST, int info_nou)
+{
+	node* nou = new node{ info_nou, NULL };
+	if (LIST == NULL)
+	{
+		LIST = nou;
+	}
+	else
+	{
+		node* tmp = LIST;
+		while (tmp->succ != NULL)
+		{
+			tmp = tmp->succ;
+		}
+		tmp->succ = nou;
+	}
+	return 1;
+}
+
+void push_dinamic(node*& LIST, node*& top, int info_nou)
+{
+	node* nou = new node{ info_nou, top };
+	top = nou;
+	inserare_sfarsit_LSI(LIST, info_nou);
+}
+
+int pop_dinamic(node*& top)
+{
+	if (!stiva_goala_dinamic(top))
+	{
+		int info_sters = top->info;
+		node* tmp = top;
+		top = top->succ;
+		delete tmp;
+		return info_sters;
+	}
+	else
+	{
+		cout << "STACK UNDERFLOW\n";
+		return -1;
+	}
+}
+
+void peek_dinamic(node*& top)
+{
+	if (top != NULL)
+	{
+		cout << "Valoarea din varful stivei este: " << top->info << endl;
+	}
+	else
+	{
+		cout << "Stiva dinamica este goala\n";
+	}
+}
+
+int coada[20];
+int FRONT_s = 0, END_s = 0;
+
+bool full_queue(int END, int max = 20) {
+	return END == max;
+}
+
+bool empty_queue(int FRONT, int END) {
+	return FRONT == END;
+}
+
+void enqueue(int coada[], int& FRONT, int& END, int val_nou, int max = 20) {
+	if (!full_queue(END, max)) 
+	{
+		coada[END++] = val_nou;
+	}
+	else 
+	{
+		cout << "Queue overflow\n";
+	}
+}
+
+int dequeue(int coada[], int& FRONT, int END) {
+	if (!empty_queue(FRONT, END)) 
+	{
+		return coada[FRONT++];
+	}
+	else 
+	{
+		cout << "Queue underflow\n";
+		return -1;
+	}
+}
+
+int main()
+{
+	char cuvant[100];
+	cout << "Introduceti cuvantul: ";
+	cin >> cuvant;
+
+	node* LIST = NULL;
+	node* top = NULL;
+
+	for (int i = 0; cuvant[i] != '\0'; i++) 
+	{
+		push_dinamic(LIST, top, cuvant[i]);
+		enqueue(coada, FRONT_s, END_s, cuvant[i]);
+	}
+
+	bool palindrom = true;
+	for (int i = 0; cuvant[i] != '\0'; i++) 
+	{
+		int c1 = pop_dinamic(top);                      // din stivă
+		int c2 = dequeue(coada, FRONT_s, END_s);        // din coadă
+		if (c1 != c2) 
+		{
+			palindrom = false;
+			break;
+		}
+	}
+
+	if (palindrom) cout << "Cuvantul este palindrom.\n";
+	else cout << "Cuvantul NU este palindrom.\n";
+}
